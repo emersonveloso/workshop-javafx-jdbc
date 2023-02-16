@@ -1,4 +1,5 @@
 package application;
+
 import java.io.IOException;
 
 import javafx.application.Application;
@@ -16,8 +17,10 @@ public class App extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainView.fxml"));
             ScrollPane scrollPane = loader.load();
+
             scrollPane.setFitToHeight(true);
             scrollPane.setFitToWidth(true);
+
             mainScene = new Scene(scrollPane);
             primaryStage.setScene(mainScene);
             primaryStage.setTitle("Sample JavaFX application");
@@ -27,7 +30,7 @@ public class App extends Application {
         }
     }
 
-    public static Scene getMaiScene() {
+    public static Scene getMainScene() {
         return mainScene;
     }
 
