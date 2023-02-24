@@ -1,9 +1,12 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import db.DbException;
+import gui.listerners.DataChangeListerner;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
@@ -22,6 +25,8 @@ public class DepartmentFormController implements Initializable {
     private Department entity;
 
     private DepartmentService departmentService;
+
+    private List<DataChangeListerner> dataChangeListerners = new ArrayList<>();
 
     @FXML
     private TextField txtId;
@@ -46,6 +51,10 @@ public class DepartmentFormController implements Initializable {
         this.departmentService = service;
     }
 
+    public void subscribeDataChangeListener(DataChangeListerner listerner) {
+        dataChangeListerners.add(listerner);
+    }
+
     @FXML
     public void onBtSaveAction(ActionEvent event) {
         if (entity == null) {
@@ -59,11 +68,18 @@ public class DepartmentFormController implements Initializable {
         try {
             entity = getFormData();
             departmentService.saveOrUpdate(entity);
+            notifyDataChangeListerners();
             Utils.currentStage(event).close();
         } catch (DbException e) {
             Alerts.showAlert("Error saving object", null, e.getMessage(), Alert.AlertType.ERROR);
         }
 
+    }
+
+    private void notifyDataChangeListerners() {
+        for (DataChangeListerner listerner : dataChangeListerners) {
+            listerner.onDataChanged();
+        }
     }
 
     private Department getFormData() {
